@@ -1,0 +1,39 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "Zahardian",
+      "email": "zahardian@gmail.com"
+    },
+    {
+      "id": "2",
+      "username": "Enxsky",
+      "email": "enxsky@gmail.com"
+    },
+    {
+      "id": "3",
+      "username": "Ronald",
+      "email": "zahardian@gmail.com"
+    },
+    {
+      "id": "4",
+      "username": "Torux",
+      "email": "torux@gmail.com"
+    },
+    {
+      "id": "4c19",
+      "username": "Zaza",
+      "email": "zaza@gmail.com"
+    },
+    {
+      "id": "3e69",
+      "username": "Henry",
+      "email": "henry@gmail.com"
+    },
+    {
+      "username": "Rudy",
+      "email": "rudy@gmail.com",
+      "id": "4c83"
+    }
+  ]
+}
