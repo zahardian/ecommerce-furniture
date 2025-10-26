@@ -1,107 +1,24 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import CartPage from "./pages/CartPage";
-import { useState } from "react";
 import ProductList from "./components/ProductList";
-
-type BlogPost = {
-  id: number;
-  title: string;
-  date: string;
-  author: string;
-  category: string;
-  image: string;
-  alt: string;
-};
-
-const blogPosts: BlogPost[] = [
-  {
-    id: 1,
-    title: "Unique products in 2023.",
-    date: "2022-11-27",
-    author: "Admin",
-    category: "deco",
-    image: "/blog-1.jpg",
-    alt: "Unique products that will impress your home in 2023.",
-  },
-  {
-    id: 2,
-    title: "Navy Blue & White Striped Area Rugs",
-    date: "2022-11-25",
-    author: "Admin",
-    category: "deco",
-    image: "/blog-2.jpg",
-    alt: "Navy Blue & White Striped Area Rugs",
-  },
-  {
-    id: 3,
-    title: "Furniex White Coated Staircase Floating",
-    date: "2022-11-18",
-    author: "Admin",
-    category: "deco",
-    image: "/blog-3.jpg",
-    alt: "Furniex White Coated Staircase Floating",
-  },
-];
-
-export interface Product {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-}
-
-export interface CartItem extends Product {
-  quantity: number;
-}
+import useApp from "./hooks/useApp";
 
 function App() {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [email, setEmail] = useState("");
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // Bisa diganti dengan API call atau logic lain
-    alert(`Subscribed with email: ${email}`);
-    setEmail("");
-  };
-
-  const handleAddToCart = (product: Product) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === product.id);
-      if (existingItem) {
-        return prevCart.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      } else {
-        return [...prevCart, { ...product, quantity: 1 }];
-      }
-    });
-  };
-
-  const handleRemoveFromCart = (id: number) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
-  };
-
-  const handleDecreaseQuantity = (id: number) => {
-    setCart((prevCart) =>
-      prevCart
-        .map((item) =>
-          item.id === id ? { ...item, quantity: item.quantity - 1 } : item
-        )
-        .filter((item) => item.quantity > 0)
-    );
-  };
-
-  const handleIncreaseQuantity = (id: number) => {
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
-    );
-  };
+  const {
+    cart,
+    handleAddToCart,
+    handleRemoveFromCart,
+    handleDecreaseQuantity,
+    handleIncreaseQuantity,
+    email,
+    setEmail,
+    handleSubmit,
+    condition,
+    about,
+    information,
+    blogPosts,
+  } = useApp();
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -518,42 +435,26 @@ function App() {
                             Help & Information
                           </p>
                           <ul className="space-y-1">
-                            <li>
-                              <a className="hover:text-white">
-                                Help & Contact Us
-                              </a>
-                            </li>
-                            <li>
-                              <a className="hover:text-white">
-                                Returns & Refunds
-                              </a>
-                            </li>
-                            <li>
-                              <a className="hover:text-white">Online Stores</a>
-                            </li>
-                            <li>
-                              <a className="hover:text-white">
-                                Terms & Conditions
-                              </a>
-                            </li>
+                            {information.map((info, index) => (
+                              <li key={index}>
+                                <a className="hover:text-blue-800">
+                                  {info.name}
+                                </a>
+                              </li>
+                            ))}
                           </ul>
                         </div>
 
                         <div>
                           <p className="font-semibold mb-2">About Us</p>
                           <ul className="space-y-1">
-                            <li>
-                              <a className="hover:text-white">About Us</a>
-                            </li>
-                            <li>
-                              <a className="hover:text-white">What We Do</a>
-                            </li>
-                            <li>
-                              <a className="hover:text-white">FAQ Page</a>
-                            </li>
-                            <li>
-                              <a className="hover:text-white">Contact Us</a>
-                            </li>
+                            {about.map((item, index) => (
+                              <li key={index}>
+                                <a className="hover:text-blue-800">
+                                  {item.name}
+                                </a>
+                              </li>
+                            ))}
                           </ul>
                         </div>
 
@@ -597,9 +498,11 @@ function App() {
                             </button>
                           </form>
                           <div className="flex flex-wrap gap-2 text-sm">
-                            <a className="hover:text-white">Term & Condition</a>
-                            <a className="hover:text-white">Policy</a>
-                            <a className="hover:text-white">Map</a>
+                            {condition.map((item, index) => (
+                              <a key={index} className="hover:text-blue-800">
+                                {item.name}
+                              </a>
+                            ))}
                           </div>
                         </div>
                       </div>

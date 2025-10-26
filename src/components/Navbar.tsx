@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCartShopping,
@@ -6,26 +5,12 @@ import {
   faXmark,
   faCouch,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-
-interface NavbarProps {
-  cartCount: number;
-}
+import { Link } from "react-router-dom";
+import type { NavbarProps } from "../types/navbar.type";
+import useNavbar from "../hooks/useNavbar";
 
 const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const scrollToSection = (id: string) => {
-    setMenuOpen(false); // Tutup menu kalau di HP diklik
-    if (location.pathname !== "/") {
-      navigate("/", { state: { scrollTo: id } });
-    } else {
-      const section = document.getElementById(id);
-      if (section) section.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  const { names, menuOpen, setMenuOpen, scrollToSection } = useNavbar();
 
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white z-50">
@@ -38,30 +23,15 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
 
           {/* TENGAH (menu besar hanya tampil di desktop/tablet) */}
           <div className="hidden sm:flex space-x-6">
-            <button
-              onClick={() => scrollToSection("home")}
-              className="cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-black hover:bg-black/10"
-            >
-              Home
-            </button>
-            <button
-              onClick={() => scrollToSection("about")}
-              className="cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-black hover:bg-black/10"
-            >
-              About
-            </button>
-            <button
-              onClick={() => scrollToSection("products")}
-              className="cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-black hover:bg-black/10"
-            >
-              Products
-            </button>
-            <button
-              onClick={() => scrollToSection("contact")}
-              className="cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-black hover:bg-black/10"
-            >
-              Contact
-            </button>
+            {names.map((item, index) => (
+              <button
+                key={index}
+                onClick={() => scrollToSection(item.parameter)}
+                className="cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-black hover:bg-black/10"
+              >
+                {item.name}
+              </button>
+            ))}
           </div>
 
           {/* KANAN: Cart + Hamburger */}
@@ -93,30 +63,15 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
       {/* MENU MOBILE */}
       {menuOpen && (
         <div className="sm:hidden  backdrop-blur-md px-4 py-3 space-y-2 shadow-md animate-slideDown">
-          <button
-            onClick={() => scrollToSection("home")}
-            className="cursor-pointer block w-full text-left px-3 py-2 rounded-md text-sm font-medium text-black hover:bg-black/10"
-          >
-            Home
-          </button>
-          <button
-            onClick={() => scrollToSection("about")}
-            className="cursor-pointer block w-full text-left px-3 py-2 rounded-md text-sm font-medium text-black hover:bg-black/10"
-          >
-            About
-          </button>
-          <button
-            onClick={() => scrollToSection("products")}
-            className="cursor-pointer block w-full text-left px-3 py-2 rounded-md text-sm font-medium text-black hover:bg-black/10"
-          >
-            Products
-          </button>
-          <button
-            onClick={() => scrollToSection("contact")}
-            className="cursor-pointer block w-full text-left px-3 py-2 rounded-md text-sm font-medium text-black hover:bg-black/10"
-          >
-            Contact
-          </button>
+          {names.map((item, index) => (
+            <button
+              key={index}
+              onClick={() => scrollToSection(item.parameter)}
+              className="cursor-pointer block w-full text-left px-3 py-2 rounded-md text-sm font-medium text-black hover:bg-black/10"
+            >
+              {item.name}
+            </button>
+          ))}
         </div>
       )}
     </nav>

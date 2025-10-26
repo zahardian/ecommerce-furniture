@@ -1,12 +1,8 @@
-import { useState } from "react";
-import type { CartItem } from "../App";
+import { useCart } from "../hooks/useCart";
+import type { CartItem, CartActions } from "../types/cart.type";
 
-interface Props {
+interface Props extends CartActions {
   cartItems: CartItem[];
-  onRemove: (id: number) => void;
-  onDecrease: (id: number) => void;
-  onIncrease: (id: number) => void;
-  onClearCart?: () => void; // optional kalau kamu punya fungsi clear cart
 }
 
 const CartPage: React.FC<Props> = ({
@@ -16,33 +12,18 @@ const CartPage: React.FC<Props> = ({
   onIncrease,
   onClearCart,
 }) => {
-  const [showModal, setShowModal] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const totalHarga = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
-
-  const handleCheckout = () => {
-    if (cartItems.length === 0) return alert("🛒 Cart is still empty!");
-
-    // tampilkan status sedang diproses
-    setIsProcessing(true);
-
-    // tampilkan modal setelah delay
-    setTimeout(() => {
-      setShowModal(true);
-      // kosongkan cart (opsional)
-      onClearCart && onClearCart();
-    }, 1000);
-  };
+  const {
+    showModal,
+    isProcessing,
+    totalHarga,
+    handleCheckout,
+    handleCloseModal,
+  } = useCart(cartItems, onClearCart);
 
   return (
     <div className="pt-24 max-w-2xl mx-auto px-4">
       <h2 className="text-3xl font-bold mb-6 text-center">🛍️ Order Summary</h2>
 
-      {/* 🟡 Jika sedang memproses pesanan */}
       {isProcessing ? (
         <div className="text-center py-20">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
@@ -60,7 +41,6 @@ const CartPage: React.FC<Props> = ({
                 key={item.id}
                 className="flex justify-between items-center border rounded-lg p-4 shadow-sm hover:shadow-md transition"
               >
-                {/* Gambar dan info produk */}
                 <div className="flex items-center gap-4">
                   <img
                     src={item.image}
@@ -76,7 +56,6 @@ const CartPage: React.FC<Props> = ({
                   </div>
                 </div>
 
-                {/* Tombol + - dan hapus */}
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => onDecrease(item.id)}
@@ -106,7 +85,6 @@ const CartPage: React.FC<Props> = ({
             ))}
           </ul>
 
-          {/* Total harga */}
           <div className="mt-8 border-t pt-6 text-right">
             <p className="text-xl font-semibold mb-4">
               Total: ${totalHarga.toFixed(2)}
@@ -121,7 +99,6 @@ const CartPage: React.FC<Props> = ({
         </>
       )}
 
-      {/* 🧾 Modal setelah pesanan diproses */}
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-2xl shadow-lg w-96 text-center">
@@ -136,11 +113,7 @@ const CartPage: React.FC<Props> = ({
               Total Payment: ${totalHarga.toFixed(2)}
             </p>
             <button
-              onClick={() => {
-                setShowModal(false);
-                setIsProcessing(false);
-                window.location.href = "/";
-              }}
+              onClick={handleCloseModal}
               className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg transition"
             >
               Go to Home
